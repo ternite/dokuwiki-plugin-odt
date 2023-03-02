@@ -206,7 +206,6 @@ class css_simple_selector {
 
         $content = '';
         $first_sign = '';
-        $next_sign = '';
         $first = true;
         $pseudo_element = false;
         while ($pos < $max) {
