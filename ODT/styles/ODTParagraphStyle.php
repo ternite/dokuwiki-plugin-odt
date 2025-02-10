@@ -104,7 +104,7 @@ class ODTParagraphStyle extends ODTStyleStyle
      */
     public function importProperties($properties, $disabled=array()) {
         foreach ($properties as $property => $value) {
-            if ($disabled [$property] == 0) {
+            if (!isset($disabled [$property]) || $disabled [$property] == 0) {
                 $this->setProperty($property, $value);
             }
         }
@@ -175,7 +175,7 @@ class ODTParagraphStyle extends ODTStyleStyle
     public function getProperty($property) {
         $style_fields = ODTStyleStyle::getStyleProperties ();
         if (array_key_exists ($property, $style_fields)) {
-            return $this->style_properties [$property]['value'];
+            return isset($this->style_properties[$property]['value']) ? $this->style_properties[$property]['value'] : null;
         }
         $paragraph_fields = self::$paragraph_fields;
         if (array_key_exists ($property, $paragraph_fields)) {
@@ -183,7 +183,7 @@ class ODTParagraphStyle extends ODTStyleStyle
         }
         $text_fields = ODTTextStyle::getTextProperties ();
         if (array_key_exists ($property, $text_fields)) {
-            return $this->text_properties [$property]['value'];
+            return isset($this->style_properties[$property]['value']) ? $this->text_properties [$property]['value'] : null;
         }
         return parent::getProperty($property);
     }
@@ -333,20 +333,21 @@ class ODTParagraphStyle extends ODTStyleStyle
      */
     public static function createParagraphStyle(array $properties, array $disabled_props = NULL, ODTDocument $doc=NULL){
         // Convert 'text-decoration'.
-        if ( $properties ['text-decoration'] == 'line-through' ) {
-            $properties ['text-line-through-style'] = 'solid';
-        }
-        if ( $properties ['text-decoration'] == 'underline' ) {
-            $properties ['text-underline-style'] = 'solid';
-        }
-        if ( $properties ['text-decoration'] == 'overline' ) {
-            $properties ['text-overline-style'] = 'solid';
+        if(!empty($properties['text-decoration']))
+        {
+            if ($properties['text-decoration'] == 'line-through') {
+                $properties ['text-line-through-style'] = 'solid';
+            } elseif ($properties['text-decoration'] == 'underline') {
+                $properties ['text-underline-style'] = 'solid';
+            } elseif ($properties['text-decoration'] == 'overline') {
+                $properties ['text-overline-style'] = 'solid';
+            }
         }
 
         // If the property 'vertical-align' has the value 'sub' or 'super'
         // then for ODT it needs to be converted to the corresponding 'text-position' property.
         // Replace sub and super with text-position.
-        $valign = $properties ['vertical-align'];
+        $valign = isset($properties['vertical-align']) ? $properties['vertical-align'] : null;
         if (!empty($valign)) {
             if ( $valign == 'sub' ) {
                 $properties ['text-position'] = '-33% 100%';
@@ -358,8 +359,8 @@ class ODTParagraphStyle extends ODTStyleStyle
         }
 
         // Separate country from language
-        $lang = $properties ['lang'];
-        $country = $properties ['country'];
+        $lang = isset($properties['lang']) ? $properties['lang'] : null;
+        $country = isset($properties['country']) ? $properties['country'] : null;
         if ( !empty($lang) ) {
             $parts = preg_split ('/-/', $lang);
             $lang = $parts [0];
@@ -391,10 +392,10 @@ class ODTParagraphStyle extends ODTStyleStyle
         }
 
         // Eventually create parent for font-size
-        $save = $disabled_props ['font-size'];
+        $save = isset($disabled_props['font-size']) ? $disabled_props['font-size'] : null;
         $odt_fo_size = '';
         if ( empty ($disabled_props ['font-size']) ) {
-            $odt_fo_size = $properties ['font-size'];
+            $odt_fo_size = isset($properties['font-size']) ? $properties['font-size'] : null;
         }
         $parent = '';
         $length = strlen ($odt_fo_size);
@@ -411,7 +412,7 @@ class ODTParagraphStyle extends ODTStyleStyle
         }
 
         // Create style name (if not given).
-        $style_name = $properties ['style-name'];
+        $style_name = $properties ['style-name'] ?? null;
         if ( empty($style_name) ) {
             $style_name = self::getNewStylename ('Paragraph');
             $properties ['style-name'] = $style_name;
@@ -472,7 +473,7 @@ class ODTParagraphStyle extends ODTStyleStyle
         // Copy $tab_stop_fields
         foreach (self::$tab_stop_fields as $property => $fields) {
             $value = $source->getProperty($property);
-            if (isset($value) && $disabled [$property] == 0) {
+            if (isset($value) && (!isset($disabled [$property]) || $disabled [$property] == 0)) {
                 $dest -> setProperty($property, $value);
             }
         }
@@ -480,7 +481,7 @@ class ODTParagraphStyle extends ODTStyleStyle
         // Copy $paragraph_fields
         foreach (self::$paragraph_fields as $property => $fields) {
             $value = $source->getProperty($property);
-            if (isset($value) && $disabled [$property] == 0) {
+            if (isset($value) && (!isset($disabled [$property]) || $disabled [$property] == 0)) {
                 $dest -> setProperty($property, $value);
             }
         }
@@ -489,7 +490,7 @@ class ODTParagraphStyle extends ODTStyleStyle
         $text_fields = ODTTextStyle::getTextProperties ();
         foreach ($text_fields as $property => $fields) {
             $value = $source->getProperty($property);
-            if (isset($value) && $disabled [$property] == 0) {
+            if (isset($value) && (!isset($disabled [$property]) || $disabled [$property] == 0)) {
                 $dest -> setProperty($property, $value);
             }
         }

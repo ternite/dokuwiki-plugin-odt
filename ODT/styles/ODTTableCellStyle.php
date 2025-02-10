@@ -205,7 +205,7 @@ class ODTTableCellStyle extends ODTStyleStyle
      */
     public static function createTableCellStyle(array $properties, array $disabled_props = NULL){
         // Create style name (if not given).
-        $style_name = $properties ['style-name'];
+        $style_name = $properties ['style-name'] ?? null;
         if ( empty($style_name) ) {
             $style_name = self::getNewStylename ('TableCell');
             $properties ['style-name'] = $style_name;

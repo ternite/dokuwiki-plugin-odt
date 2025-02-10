@@ -73,7 +73,7 @@ class css_attribute_selector {
             switch ($this->operator) {
                 case '=':
                     // Attribute should have exactly the value $this->value
-                    if ($attributes [$this->attribute] == $this->value) {
+                    if (isset($attributes[$this->attribute]) && $attributes[$this->attribute] == $this->value) {
                         return true;
                     } else {
                         return false;
@@ -121,7 +121,7 @@ class css_attribute_selector {
 
                 case '*=':
                     // Attribute value should include $this->value
-                    if (strpos($attributes [$this->attribute], $this->value) !== false) {
+                    if (isset($attributes[$this->attribute]) && strpos($attributes [$this->attribute], $this->value) !== false) {
                         return true;
                     }
                     break;
@@ -206,6 +206,7 @@ class css_simple_selector {
 
         $content = '';
         $first_sign = '';
+        $next_sign = '';
         $first = true;
         $pseudo_element = false;
         while ($pos < $max) {
@@ -329,8 +330,7 @@ class css_simple_selector {
 
         // Match id
         if (!empty($this->id) &&
-            !empty($element_attrs ['id']) && 
-            $this->id != $element_attrs ['id']) {
+            $this->id != ($element_attrs ['id'] ?? null)) {
             return false;
         }
 
@@ -1104,7 +1104,7 @@ class cssimportnew {
                 // Only accept a property value if the current specificity of the matched
                 // rule/selector is higher or equal than the highest one.
                 foreach ($current as $property => $value) {
-                    if (isset($highest [$property]) && $specificity >= $highest [$property]) {
+                    if (!isset($highest [$property]) || $specificity >= $highest [$property]) {
                         $highest [$property] = $specificity;
                         $temp [$property] = $value;
                     }
@@ -1259,9 +1259,9 @@ class cssimportnew {
         // (MUST be done backwards!)
         $max = count ($parents);
         foreach ($parents as $parent) {
-            $properties = $parent->getProperties ();
+            $properties = $parent->getProperties() ?? [];
             foreach ($properties as $key => $value) {
-                if ($dest [$key] == 'inherit') {
+                if (!isset($dest [$key]) || $dest [$key] == 'inherit') {
                     $dest [$key] = $value;
                 } else {
                     if (strncmp($key, 'background', strlen('background')) == 0) {

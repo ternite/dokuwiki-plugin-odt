@@ -219,7 +219,7 @@ class renderer_plugin_odt_page extends Doku_Renderer {
                 if (!empty($fontFize)) {
                     $fontFizeInPx = $this->document->toPixel($fontFize);
                     if (!empty($fontFizeInPx)) {
-                        $this->document->setPixelPerEm($fontFizeInPx);
+                        $this->document->setPixelPerEm(trim ($fontFizeInPx, 'px'));
                     }
                 }
             }
@@ -927,37 +927,37 @@ class renderer_plugin_odt_page extends Doku_Renderer {
      * @param string|int $y second value
      */
     function multiplyentity($x, $y) {
-        $text .= $x.'×'.$y;
+        $text = $x.'×'.$y;
         $this->document->addPlainText($text);
     }
 
     function singlequoteopening() {
         global $lang;
-        $text .= $lang['singlequoteopening'];
+        $text = $lang['singlequoteopening'];
         $this->document->addPlainText($text);
     }
 
     function singlequoteclosing() {
         global $lang;
-        $text .= $lang['singlequoteclosing'];
+        $text = $lang['singlequoteclosing'];
         $this->document->addPlainText($text);
     }
 
     function apostrophe() {
         global $lang;
-        $text .= $lang['apostrophe'];
+        $text = $lang['apostrophe'];
         $this->document->addPlainText($text);
     }
 
     function doublequoteopening() {
         global $lang;
-        $text .= $lang['doublequoteopening'];
+        $text = $lang['doublequoteopening'];
         $this->document->addPlainText($text);
     }
 
     function doublequoteclosing() {
         global $lang;
-        $text .= $lang['doublequoteclosing'];
+        $text = $lang['doublequoteclosing'];
         $this->document->addPlainText($text);
     }
 
@@ -1110,8 +1110,7 @@ class renderer_plugin_odt_page extends Doku_Renderer {
     function _highlight($type, $text, $language=null, $options = null) {
 
         if (is_null($language)) {
-            $this->_preformatted($text, $style_name);
-            return;
+            $language = 'text';
         }
 
         // Use cached geshi
@@ -1128,11 +1127,7 @@ class renderer_plugin_odt_page extends Doku_Renderer {
         $options ['element'] = 'pre';
         $options ['style_names'] = 'prefix_and_class';
         $options ['style_names_prefix'] = 'highlight_';
-        if (empty($language)) {
-            $options ['attributes'] = 'class="code"';
-        } else {
-            $options ['attributes'] = 'class="code '.$language.'"';
-        }
+        $options ['attributes'] = 'class="code '.$language.'"';
         $options ['list_ol_style'] = 'highlight_list_ol_style';
         $options ['list_p_style'] = 'highlight_list_paragraph_style';
         $options ['p_style'] = $this->document->getStyleName('preformatted');
@@ -1179,7 +1174,8 @@ class renderer_plugin_odt_page extends Doku_Renderer {
     function internalmedia ($src, $title=NULL, $align=NULL, $width=NULL,
                             $height=NULL, $cache=NULL, $linking=NULL, $returnonly = false) {
         global $ID;
-        resolve_mediaid(getNS($ID),$src, $exists);
+        $resolver = new \dokuwiki\File\MediaResolver($ID);
+        $src = $resolver->resolveId($src);
         list(/* $ext */,$mime) = mimetype($src);
 
         if ($linking == 'linkonly') {
@@ -1329,11 +1325,12 @@ class renderer_plugin_odt_page extends Doku_Renderer {
         // default name is based on $id as given
         $default = $this->_simpleTitle($id);
         // now first resolve and clean up the $id
-        resolve_pageid(getNS($ID),$id,$exists);
+        $resolver = new \dokuwiki\File\PageResolver($ID);
+        $id = $resolver->resolveId($id);
         $name = $this->_getLinkTitle($name, $default, $isImage, $id);
 
         // build the absolute URL (keeping a hash if any)
-        list($id,$hash) = explode('#',$id,2);
+        list($id, $hash) = array_pad(explode('#', $id, 2), 2, null); // array_pad() is used to add a null value to the array returned by explode() if it has fewer than two elements.
         $url = wl($id,'',true);
         if($hash) $url .='#'.$hash;
 

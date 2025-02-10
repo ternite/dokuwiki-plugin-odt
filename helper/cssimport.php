@@ -421,8 +421,7 @@ class css_declaration {
             $border_color_set = false;
             while ( $index < 3 ) {
                 if ( $border_width_set === false ) {
-                    if (!isset($values [$index])) $values [$index] = 'medium';
-                    switch ($values [$index]) {
+                    switch ($values [$index] ?? null) {
                         case 'thin':
                         case 'medium':
                         case 'thick':
@@ -432,7 +431,7 @@ class css_declaration {
                             }
                         break;
                         default:
-                            if ( strpos ($values [$index], 'px') !== false ) {
+                            if ( isset($values [$index]) && strpos ($values [$index], 'px') !== false ) {
                                 $decls [] = new css_declaration ('border-width', $values [$index]);
                                 foreach ($border_sides as $border_side) {
                                     $decls [] = new css_declaration ($border_side.'-width', $values [$index]);
@@ -447,8 +446,7 @@ class css_declaration {
                     continue;
                 }
                 if ( $border_style_set === false ) {
-                    if (!isset($values [$index])) $values [$index] = 'none';
-                    switch ($values [$index]) {
+                    switch ($values[$index] ?? null) {
                         case 'none':
                         case 'dotted':
                         case 'dashed':
@@ -475,10 +473,9 @@ class css_declaration {
                     continue;
                 }
                 if ( $border_color_set === false ) {
-                    if (!isset($values [$index])) $values [$index] = 'initial';
-                    $decls [] = new css_declaration ('border-color', $values [$index]);
+                    $decls[] = new css_declaration('border-color', $values[$index] ?? null);
                     foreach ($border_sides as $border_side) {
-                        $decls [] = new css_declaration ($border_side.'-color', $values [$index]);
+                        $decls [] = new css_declaration( $border_side.'-color', $values[$index] ?? null);
                     }
 
                     // This is the last value.
@@ -486,7 +483,7 @@ class css_declaration {
                 }
             }
             foreach ($border_sides as $border_side) {
-                $decls [] = new css_declaration ($border_side, $values [0].' '.$values [1].' '.$values [2]);
+                $decls [] = new css_declaration ($border_side, ($values[0] ?? null) . ' ' . ($values[1] ?? null) . ' ' . ($values[2] ?? null));
             }
         }
     }
@@ -893,11 +890,10 @@ class css_declaration {
             case 'border-top':
             case 'border-bottom':
                 $values = preg_split ('/\s+/', $this->value);
-                if (!isset($values [1])) $values [1] = 'none'; // border-style
-                if (!isset($values [2])) $values [2] = 'currentcolor'; // border-color
                 $width =
                     call_user_func($callback, $this->property, $values [0], CSSValueType::StrokeOrBorderWidth, $rule);
-                $this->value = $width . ' ' . $values [1] . ' ' . $values [2];
+                $this->value = $width . ' ' . ($values[1] ?? null) . ' ' . ($values[2] ?? null);
+
             break;
         }
     }

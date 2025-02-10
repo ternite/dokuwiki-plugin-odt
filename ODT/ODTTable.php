@@ -21,7 +21,7 @@ class ODTTable
         if (!isset($element)) {
             $element = 'table';
         }
-        $elementObj = $params->elementObj;
+        $elementObj = isset($params->elementObj) ? $params->elementObj : null;
 
         // Close any open paragraph.
         $params->document->paragraphClose();
@@ -398,7 +398,7 @@ class ODTTable
      * @param null $numrows
      */
     public static function tableOpenUseProperties (ODTInternalParams $params, $properties, $maxcols = 0, $numrows = 0){
-        $elementObj = $params->elementObj;
+        $elementObj = isset($params->elementObj) ? $params->elementObj : null;
 
         // Eventually adjust table width.
         if ( !empty ($properties ['width']) ) {
@@ -426,7 +426,7 @@ class ODTTable
      */
     public static function tableAddColumnUseProperties (ODTInternalParams $params, array $properties = NULL){
         // Add column and set/query assigned style name
-        $styleName = $properties ['style-name'];
+        $styleName = $properties['style-name'] ?? null;
         $styleNameGet = '';
         self::tableAddColumn ($params, $styleName, $styleNameGet);
 
@@ -589,7 +589,7 @@ class ODTTable
         }
         $curr_column = $table->getTableCurrentColumn();
         $table_column_styles = $table->getTableColumnStyles();
-        $style_name = $table_column_styles [$curr_column-1];
+        $style_name = $table_column_styles [$curr_column-1] ?? null;
         $style_obj = $params->document->getStyle($style_name);
 
         if (isset($style_obj)) {

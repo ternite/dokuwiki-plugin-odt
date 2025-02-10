@@ -62,7 +62,7 @@ class ODTElementTable extends ODTStateElement implements iContainerAccess
         if (!isset($style_name)) {
             $encoded = '<table:table>';
         } else {
-            $encoded .= '<table:table table:style-name="'.$style_name.'">';
+            $encoded = '<table:table table:style-name="'.$style_name.'">';
         }
         $maxcols = $this->getTableMaxColumns();
         $count = $this->getCount();
@@ -171,7 +171,7 @@ class ODTElementTable extends ODTStateElement implements iContainerAccess
      * @param array $value
      */
     public function getTableColumnStyleName($column) {
-        return $this->table_column_styles [$column];
+        return $this->table_column_styles [$column] ?? null;
     }
 
     /**
@@ -324,19 +324,25 @@ class ODTElementTable extends ODTStateElement implements iContainerAccess
             $cell_style->getProperty('padding-right') != NULL) {
             $value = $cell_style->getProperty('padding-left');
             $value = $params->document->toPoints($value, 'y');
+            $value = trim ($value, 'pt');
             $padding += $value;
             $value = $cell_style->getProperty('padding-right');
             $value = $params->document->toPoints($value, 'y');
+            $value = trim ($value, 'pt');
             $padding += $value;
         } else if ($cell_style->getProperty('padding') != NULL) {
             $value = $cell_style->getProperty('padding');
             $value = $params->document->toPoints($value, 'y');
-            $padding += 2 * $value;
+            $value = trim ($value, 'pt');
+            if (is_numeric($value)) {
+                $padding += 2 * $value;
+            }
         }
 
         $table_column_styles = $this->getTableColumnStyles();
-        $style_name = $table_column_styles [$column-1];
+        $style_name = $table_column_styles [$column-1] ?? null;
         $style_obj = $params->document->getStyle($style_name);
+        $width = 0;
         if (isset($style_obj)) {
             $width = $style_obj->getProperty('column-width');
             $width = trim ($width, 'pt');
@@ -421,10 +427,11 @@ class ODTElementTable extends ODTStateElement implements iContainerAccess
             return;
         }
 
-        $max_width = $this->getMaxWidth($params);
+        $max_width = trim ($this->getMaxWidth($params), 'pt');
         $width = $this->adjustWidthInternal ($params, $max_width);
 
         $style_obj = $params->document->getStyle($table_style_name);
+        $rel_width = 0;
         if (isset($style_obj)) {
             $style_obj->setProperty('width', $width.'pt');
             if (!$this->isNested ()) {
@@ -466,7 +473,7 @@ class ODTElementTable extends ODTStateElement implements iContainerAccess
         $table_column_styles = $this->getTableColumnStyles();
         $replace = true;
         for ($index = 0 ; $index < $this->getTableMaxColumns() ; $index++ ) {
-            $style_name = $table_column_styles [$index];
+            $style_name = $table_column_styles [$index] ?? null;
             $style_obj = $params->document->getStyle($style_name);
             if (isset($style_obj)) {
                 if ($style_obj->getProperty('rel-column-width') != NULL) {
