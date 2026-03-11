@@ -10,12 +10,12 @@ require_once 'ODTTestUtils.php';
  * @group plugins
  */
 class plugin_odt_renderer_start_test extends DokuWikiTest {
-    public function setUp() {
+    public function setUp() : void {
         $this->pluginsEnabled[] = 'odt';
         parent::setUp();
     }
 
-    public static function setUpBeforeClass(){
+    public static function setUpBeforeClass() : void {
         parent::setUpBeforeClass();
 
         // copy test files to test directory

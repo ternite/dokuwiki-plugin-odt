@@ -22,7 +22,7 @@ class plugin_odt_renderer_format_test extends DokuWikiTest {
     /**
      * Setup.
      */
-    public function setUp() {
+    public function setUp() : void {
         $this->pluginsEnabled[] = 'odt';
         parent::setUp();
     }
@@ -32,7 +32,7 @@ class plugin_odt_renderer_format_test extends DokuWikiTest {
      * 
      * Copy our required test files.
      */
-    public static function setUpBeforeClass(){
+    public static function setUpBeforeClass() : void {
         parent::setUpBeforeClass();
 
         // copy test files to test directory

@@ -10,7 +10,7 @@ require_once DOKU_INC.'lib/plugins/odt/helper/units.php';
  * @group plugins
  */
 class plugin_odt_units_test extends DokuWikiTest {
-    public function setUp() {
+    public function setUp() : void {
         $this->pluginsEnabled[] = 'odt';
         parent::setUp();
     }

@@ -9,7 +9,7 @@ require_once DOKU_INC.'lib/plugins/odt/ODT/styles/ODTStyle.php';
  * @group plugins
  */
 class plugin_odt_tablestyle_test extends DokuWikiTest {
-    public function setUp() {
+    public function setUp() : void {
         $this->pluginsEnabled[] = 'odt';
         parent::setUp();
     }

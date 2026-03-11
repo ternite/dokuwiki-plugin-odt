@@ -20,7 +20,7 @@ class plugin_odt_tablecolumnstyle_test extends DokuWikiTest {
     /**
      * Setup.
      */
-    public function setUp() {
+    public function setUp() : void {
         $this->pluginsEnabled[] = 'odt';
         parent::setUp();
     }

@@ -8,12 +8,12 @@
  * @group plugins
  */
 class plugin_odt_renderer_image_test extends DokuWikiTest {
-    public function setUp() {
+    public function setUp() : void {
         $this->pluginsEnabled[] = 'odt';
         parent::setUp();
     }
 
-    public static function setUpBeforeClass(){
+    public static function setUpBeforeClass() : void {
         parent::setUpBeforeClass();
 
         // Copy test media files to test wiki namespace

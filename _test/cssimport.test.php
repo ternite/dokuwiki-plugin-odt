@@ -9,12 +9,12 @@ require_once DOKU_INC.'lib/plugins/odt/helper/cssimport.php';
  * @group plugins
  */
 class plugin_odt_cssimport_test extends DokuWikiTest {
-    public function setUp() {
+    public function setUp() : void {
         $this->pluginsEnabled[] = 'odt';
         parent::setUp();
     }
 
-    public static function setUpBeforeClass(){
+    public static function setUpBeforeClass() : void {
         parent::setUpBeforeClass();
 
         // copy CSS test files to test directory
