@@ -325,16 +325,20 @@ class ODTElementTable extends ODTStateElement implements iContainerAccess
             $value = $cell_style->getProperty('padding-left');
             $value = $params->document->toPoints($value, 'y');
             $value = trim ($value, 'pt');
-            $padding += $value;
+            if (is_numeric($value) && is_numeric($padding)) {
+                $padding += $value;
+            }
             $value = $cell_style->getProperty('padding-right');
             $value = $params->document->toPoints($value, 'y');
             $value = trim ($value, 'pt');
-            $padding += $value;
+            if (is_numeric($value) && is_numeric($padding)) {
+                $padding += $value;
+            }
         } else if ($cell_style->getProperty('padding') != NULL) {
             $value = $cell_style->getProperty('padding');
             $value = $params->document->toPoints($value, 'y');
             $value = trim ($value, 'pt');
-            if (is_numeric($value)) {
+            if (is_numeric($value) && is_numeric($padding)) {
                 $padding += 2 * $value;
             }
         }
@@ -346,7 +350,9 @@ class ODTElementTable extends ODTStateElement implements iContainerAccess
         if (isset($style_obj)) {
             $width = $style_obj->getProperty('column-width');
             $width = trim ($width, 'pt');
-            $width -= $padding;
+            if (is_numeric($padding) && is_numeric($width)) {
+                $width -= $padding;
+            }
         }
 
         // Compare with total table width
@@ -438,12 +444,12 @@ class ODTElementTable extends ODTStateElement implements iContainerAccess
                 // Calculate rel width in relation to maximum page width
                 $maxPageWidth = $params->document->getAbsWidthMindMargins ();
                 $maxPageWidth = $params->units->getDigits ($params->units->toPoints($maxPageWidth.'cm'));
-                if ($maxPageWidth != 0) {
+                if ($maxPageWidth != 0 && is_numeric($width) && is_numeric($maxPageWidth)) {
                     $rel_width = round(($width * 100)/$maxPageWidth);
                 }
             } else {
                 // Calculate rel width in relation to maximum table width
-                if ($max_width != 0) {
+                if ($max_width != 0 && is_numeric($width) && is_numeric($max_width)) {
                     $rel_width = round(($width * 100)/$max_width);
                 }
             }
