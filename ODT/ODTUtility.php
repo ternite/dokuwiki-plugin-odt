@@ -151,7 +151,7 @@ class ODTUtility
             $length = $end - $start_open + $length_close;
             $content = substr ($docContent, $start_close + 1, $end - ($start_close + 1));
 
-            if ( @blank($content) ) {
+            if ( @blank($content, true) ) {
                 // Paragraph is empty or consists of whitespace only. Check style name.
                 $style_start = strpos ($docContent, '"', $start_open);
                 if ( $style_start === false ) {
